@@ -221,7 +221,6 @@ impl ComIsBleh {
 
 impl Drop for ComIsBleh {
     fn drop(&mut self) {
-        println!("YO THE COM WAS DROPPED");
         unsafe { CoUninitialize() };
     }
 }

@@ -1,13 +1,14 @@
 use crate::watcher::*;
 #[cfg(windows)]
 use crate::windows::*;
-use crossbeam_channel::{unbounded, Receiver};
+use crossbeam_channel::{select, unbounded, Receiver};
+#[cfg(windows)]
 use ctrlc::set_handler;
 use failure::Error;
 #[cfg(windows)]
 use pelite::{pattern, PeFile};
 use std::sync::{
-    atomic::{AtomicUsize, Ordering},
+    atomic::{AtomicBool, Ordering},
     Arc,
 };
 use structopt::StructOpt;
@@ -25,22 +26,23 @@ struct CommandOptions {
 
 fn main() -> Result<(), Error> {
     let args = CommandOptions::from_args();
-    let count = Arc::new(AtomicUsize::new(0));
 
     // Watch the Spotify directory for file changes
     let (tx, rx) = unbounded();
     let _watcher = Watcher::watch(tx, args.username)?;
 
-    let count_thd = count.clone();
+    // Handle exiting
+    let running = Arc::new(AtomicBool::new(true));
+    let running_thd = running.clone();
     set_handler(move || {
-        println!(
-            "Exiting... Spotify played {}~ ads this session.",
-            count_thd.load(Ordering::SeqCst)
-        );
+        running_thd.store(false, Ordering::SeqCst);
     })?;
 
-    // OS-specific
-    for_great_justice(rx, count)
+    // You have no chance to survive make your time
+    let mut count = 0;
+    for_great_justice(running, rx, &mut count)?;
+    println!("Exiting... Spotify played {}~ ads this session.", count);
+    Ok(())
 }
 
 fn main_screen_turn_on() {
@@ -50,8 +52,9 @@ fn main_screen_turn_on() {
 
 #[cfg(windows)]
 fn for_great_justice(
+    running: Arc<AtomicBool>,
     rx: Receiver<notify::Result<notify::Event>>,
-    count: Arc<AtomicUsize>,
+    count: &mut usize,
 ) -> Result<(), Error> {
     // Find Spotify and attach to the process
     let (process_entry, module_entry) = Windows::find_spotify()?;
@@ -76,22 +79,28 @@ fn for_great_justice(
 
     // Block for events from the watcher
     let mut is_muted = false;
-    loop {
-        if let Ok(event) = rx.recv() {
-            if let Ok(event) = event {
-                if Watcher::is_target_event(event) {
-                    let identifier = Windows::get_current_track(&process, target_address)?;
-                    let is_playing_ad = identifier.eq("spotify:ad");
-                    if is_playing_ad && !is_muted {
-                        is_muted = true;
-                        com.set_mute(is_playing_ad as i32)?;
-                        count.fetch_add(1, Ordering::SeqCst);
-                    } else if !is_playing_ad && is_muted {
-                        is_muted = false;
-                        com.set_mute(is_playing_ad as i32)?;
+    while running.load(Ordering::SeqCst) {
+        select! {
+            recv(rx) -> event => {
+                if let Ok(event) = event {
+                    if let Ok(event) = event {
+                        if Watcher::is_target_event(event) {
+                            let identifier = Windows::get_current_track(&process, target_address)?;
+                            let is_playing_ad = identifier.eq("spotify:ad");
+                            if is_playing_ad && !is_muted {
+                                is_muted = true;
+                                com.set_mute(is_playing_ad as i32)?;
+                                *count += 1;
+                            } else if !is_playing_ad && is_muted {
+                                is_muted = false;
+                                com.set_mute(is_playing_ad as i32)?;
+                            }
+                        }
                     }
                 }
-            }
-        }
+            },
+            default => {},
+        };
     }
+    Ok(())
 }
