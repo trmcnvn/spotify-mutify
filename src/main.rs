@@ -2,9 +2,14 @@ use crate::watcher::*;
 #[cfg(windows)]
 use crate::windows::*;
 use crossbeam_channel::{unbounded, Receiver};
+use ctrlc::set_handler;
 use failure::Error;
 #[cfg(windows)]
 use pelite::{pattern, PeFile};
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    Arc,
+};
 use structopt::StructOpt;
 
 mod watcher;
@@ -20,18 +25,33 @@ struct CommandOptions {
 
 fn main() -> Result<(), Error> {
     let args = CommandOptions::from_args();
+    let count = Arc::new(AtomicUsize::new(0));
 
     // Watch the Spotify directory for file changes
     let (tx, rx) = unbounded();
     let _watcher = Watcher::watch(tx, args.username)?;
 
+    let count_thd = count.clone();
+    set_handler(move || {
+        println!(
+            "Exiting... Spotify played {}~ ads this session.",
+            count_thd.load(Ordering::SeqCst)
+        );
+    })?;
+
     // OS-specific
-    dont_play_your_ads_at_a_higher_volume(rx)
+    for_great_justice(rx, count)
+}
+
+fn main_screen_turn_on() {
+    println!("Spotify are belong to us! Waiting for ads...");
+    println!("Exit with Ctrl-C...");
 }
 
 #[cfg(windows)]
-fn dont_play_your_ads_at_a_higher_volume(
+fn for_great_justice(
     rx: Receiver<notify::Result<notify::Event>>,
+    count: Arc<AtomicUsize>,
 ) -> Result<(), Error> {
     // Find Spotify and attach to the process
     let (process_entry, module_entry) = Windows::find_spotify()?;
@@ -42,7 +62,6 @@ fn dont_play_your_ads_at_a_higher_volume(
     process.vm_read_partial(module_entry.base(), &mut bytes)?;
 
     // Map the read data into a PeFile structure and scan for our signature address
-    // TODO: Figure out why this finds the signature 0x1800 past the actual point.
     let file = PeFile::from_bytes(&bytes)?;
     let pattern = pattern!("01 00 00 00 '73 70 6F 74 69 66 79 3A");
     let mut addresses = [0; 2];
@@ -53,7 +72,7 @@ fn dont_play_your_ads_at_a_higher_volume(
 
     // Get audio session control
     let com = Windows::get_audio_session(process_entry.process_id())?;
-    println!("Spotify are belong to us! Waiting for updates...");
+    main_screen_turn_on();
 
     // Block for events from the watcher
     let mut is_muted = false;
@@ -66,6 +85,7 @@ fn dont_play_your_ads_at_a_higher_volume(
                     if is_playing_ad && !is_muted {
                         is_muted = true;
                         com.set_mute(is_playing_ad as i32)?;
+                        count.fetch_add(1, Ordering::SeqCst);
                     } else if !is_playing_ad && is_muted {
                         is_muted = false;
                         com.set_mute(is_playing_ad as i32)?;

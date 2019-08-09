@@ -16,6 +16,7 @@ crossbeam-channel = "0.3.8"
 notify = "=5.0.0-pre.1"
 directories = "2.0"
 failure = "0.1"
+ctrlc = { version = "3.1", features = ["termination"] }
 
 [target.'cfg(windows)'.dependencies]
 external = { git = "https://github.com/CasualX/external", rev = "af1c872" }
@@ -23,5 +24,6 @@ pelite = { git = "https://github.com/CasualX/pelite", rev = "155918a" }
 winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "mmdeviceapi"] }
 com_ptr = "0.1"
 
+# Dependent on PR and build fixes
 [patch.crates-io]
 winapi = { path = "../winapi-rs" }

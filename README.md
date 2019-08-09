@@ -37,8 +37,3 @@ OPTIONS:
 -   MacOS: https://github.com/ArtemGordinsky/Spotifree
 -   MacOS: https://github.com/simonmeusel/MuteSpotifyAds
 -   Linux: https://github.com/SecUpwN/Spotify-AdKiller
-
-### TODOs (Maybe?)
-
--   MacOS Support?
--   Launch Spotify if not already open.
