@@ -1,6 +1,8 @@
 # Spotify Mutify
 
-This application mutes Spotify when it is playing an ad. Currently this only supports **Windows**.
+Currently this only supports **Windows**.
+
+Mute those overly loud Spotify Ads.
 
 This will read the memory of the Spotify application to find out the currently playing track, and mute the application accordinly.
 
@@ -18,7 +20,15 @@ and fraudulent streaming activities are not permitted;
 ## Usage
 
 ```
-spotify-mutify.exe --username <spotify_username>
+USAGE:
+    spotify-mutify.exe --username <username>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -u, --username <username>    Spotify username
 ```
 
 ## Related Applications
@@ -32,4 +42,3 @@ spotify-mutify.exe --username <spotify_username>
 
 -   MacOS Support?
 -   Launch Spotify if not already open.
--   Mute Spotify directly instead of using the Mute key.

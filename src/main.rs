@@ -3,7 +3,6 @@ use crate::watcher::*;
 use crate::windows::*;
 use crossbeam_channel::{unbounded, Receiver};
 use failure::Error;
-use notify::RawEvent;
 #[cfg(windows)]
 use pelite::{pattern, PeFile};
 use structopt::StructOpt;
@@ -22,10 +21,8 @@ struct CommandOptions {
 fn main() -> Result<(), Error> {
     let args = CommandOptions::from_args();
 
-    // Create communication channel
-    let (tx, rx) = unbounded();
-
     // Watch the Spotify directory for file changes
+    let (tx, rx) = unbounded();
     let _watcher = Watcher::watch(tx, args.username)?;
 
     // OS-specific
@@ -33,7 +30,9 @@ fn main() -> Result<(), Error> {
 }
 
 #[cfg(windows)]
-fn dont_play_your_ads_at_a_higher_volume(rx: Receiver<RawEvent>) -> Result<(), Error> {
+fn dont_play_your_ads_at_a_higher_volume(
+    rx: Receiver<notify::Result<notify::Event>>,
+) -> Result<(), Error> {
     // Find Spotify and attach to the process
     let (process_entry, module_entry) = Windows::find_spotify()?;
     let process = Windows::attach_to_spotify(process_entry.process_id())?;
@@ -50,23 +49,27 @@ fn dont_play_your_ads_at_a_higher_volume(rx: Receiver<RawEvent>) -> Result<(), E
     file.scanner()
         .matches(&pattern, file.headers().image_range())
         .next(&mut addresses);
+    let target_address = (module_entry.base() + addresses[1] as usize) - 0x1800;
 
-    // Wait for events from the watcher
-    let mut is_playing_ad = false;
+    // Get audio session control
+    let com = Windows::get_audio_session(process_entry.process_id())?;
+    println!("Spotify are belong to us! Waiting for updates...");
+
+    // Block for events from the watcher
+    let mut is_muted = false;
     loop {
         if let Ok(event) = rx.recv() {
-            if Watcher::is_target_event(event) {
-                let identifier = Windows::get_current_track(
-                    &process,
-                    (module_entry.base() + addresses[1] as usize) - 0x1800,
-                )?;
-                let result = identifier.contains("spotify:ad");
-                if result && !is_playing_ad {
-                    is_playing_ad = true;
-                    Windows::mute_spotify(process_entry.process_id(), result)?;
-                } else if !result && is_playing_ad {
-                    is_playing_ad = false;
-                    Windows::mute_spotify(process_entry.process_id(), result)?;
+            if let Ok(event) = event {
+                if Watcher::is_target_event(event) {
+                    let identifier = Windows::get_current_track(&process, target_address)?;
+                    let is_playing_ad = identifier.eq("spotify:ad");
+                    if is_playing_ad && !is_muted {
+                        is_muted = true;
+                        com.set_mute(is_playing_ad as i32)?;
+                    } else if !is_playing_ad && is_muted {
+                        is_muted = false;
+                        com.set_mute(is_playing_ad as i32)?;
+                    }
                 }
             }
         }
