@@ -11,6 +11,8 @@ use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
 };
+use std::thread;
+use std::time::Duration;
 use structopt::StructOpt;
 
 mod watcher;
@@ -80,6 +82,7 @@ fn for_great_justice(
     // Block for events from the watcher
     let mut is_muted = false;
     while running.load(Ordering::SeqCst) {
+        thread::sleep(Duration::from_millis(100));
         select! {
             recv(rx) -> event => {
                 if let Ok(event) = event {
