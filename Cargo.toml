@@ -26,4 +26,4 @@ com_ptr = "0.1"
 
 # Dependent on PR and build fixes
 [patch.crates-io]
-winapi = { path = "../winapi-rs" }
+winapi = { git = "https://github.com/trmcnvn/winapi-rs", branch = "working_build_with_796" }
