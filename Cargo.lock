@@ -5,7 +5,7 @@ name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -36,7 +36,7 @@ version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -119,7 +119,7 @@ name = "com_ptr"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -150,7 +150,7 @@ version = "3.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "nix 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -170,7 +170,7 @@ dependencies = [
  "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "redox_users 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -179,7 +179,7 @@ version = "0.1.0"
 source = "git+https://github.com/CasualX/external?rev=af1c872#af1c872563838cff13f0c2373346f103b4abbf40"
 dependencies = [
  "ntapi 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -210,7 +210,7 @@ dependencies = [
  "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "redox_syscall 0.1.56 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -362,7 +362,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "cfg-if 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -400,7 +400,7 @@ dependencies = [
  "mio 0.6.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "mio-extras 2.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "walkdir 2.2.9 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -408,7 +408,7 @@ name = "ntapi"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -436,7 +436,7 @@ dependencies = [
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "smallvec 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -446,7 +446,7 @@ source = "git+https://github.com/CasualX/pelite?rev=155918a#155918ae2bdbab421c84
 dependencies = [
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "pelite-macros 0.1.0 (git+https://github.com/CasualX/pelite?rev=155918a)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -479,7 +479,7 @@ dependencies = [
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -505,7 +505,7 @@ dependencies = [
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand_core 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rdrand 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -573,7 +573,7 @@ dependencies = [
  "notify 5.0.0-pre.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pelite 0.7.1 (git+https://github.com/CasualX/pelite?rev=155918a)",
  "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -666,7 +666,7 @@ version = "2.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "same-file 1.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
  "winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -678,9 +678,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "winapi"
 version = "0.3.7"
+source = "git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796#6a4bfe04df7db172ea13271cbee19e3366258bc9"
 dependencies = [
- "winapi-i686-pc-windows-gnu 0.4.0",
- "winapi-x86_64-pc-windows-gnu 0.4.0",
+ "winapi-i686-pc-windows-gnu 0.4.0 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
+ "winapi-x86_64-pc-windows-gnu 0.4.0 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
@@ -691,18 +692,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "winapi-i686-pc-windows-gnu"
 version = "0.4.0"
+source = "git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796#6a4bfe04df7db172ea13271cbee19e3366258bc9"
 
 [[package]]
 name = "winapi-util"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "winapi 0.3.7",
+ "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
 name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
+source = "git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796#6a4bfe04df7db172ea13271cbee19e3366258bc9"
 
 [[package]]
 name = "ws2_32-sys"
@@ -794,6 +797,9 @@ dependencies = [
 "checksum void 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6a02e4885ed3bc0f2de90ea6dd45ebcbb66dacffe03547fadbb0eeae2770887d"
 "checksum walkdir 2.2.9 (registry+https://github.com/rust-lang/crates.io-index)" = "9658c94fa8b940eab2250bd5a457f9c48b748420d71293b165c8cdbe2f55f71e"
 "checksum winapi 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "167dc9d6949a9b857f3451275e911c3f44255842c1f7a76f33c55103a909087a"
+"checksum winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)" = "<none>"
 "checksum winapi-build 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2d315eee3b34aca4797b2da6b13ed88266e6d612562a0c46390af8299fc699bc"
+"checksum winapi-i686-pc-windows-gnu 0.4.0 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)" = "<none>"
 "checksum winapi-util 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7168bab6e1daee33b4557efd0e95d5ca70a03706d39fa5f3fe7a236f584b03c9"
+"checksum winapi-x86_64-pc-windows-gnu 0.4.0 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)" = "<none>"
 "checksum ws2_32-sys 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
