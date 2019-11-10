@@ -176,7 +176,7 @@ dependencies = [
 [[package]]
 name = "external"
 version = "0.1.0"
-source = "git+https://github.com/CasualX/external?rev=af1c872#af1c872563838cff13f0c2373346f103b4abbf40"
+source = "git+https://github.com/CasualX/external?rev=c680919#c6809197854f86426ff5a84b5e54dbfae78a37cb"
 dependencies = [
  "ntapi 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
@@ -441,18 +441,18 @@ dependencies = [
 
 [[package]]
 name = "pelite"
-version = "0.7.1"
-source = "git+https://github.com/CasualX/pelite?rev=155918a#155918ae2bdbab421c84942060fa32bc2c8025e3"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.60 (registry+https://github.com/rust-lang/crates.io-index)",
- "pelite-macros 0.1.0 (git+https://github.com/CasualX/pelite?rev=155918a)",
+ "pelite-macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
 
 [[package]]
 name = "pelite-macros"
 version = "0.1.0"
-source = "git+https://github.com/CasualX/pelite?rev=155918a#155918ae2bdbab421c84942060fa32bc2c8025e3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "proc-macro2"
@@ -568,10 +568,10 @@ dependencies = [
  "crossbeam-channel 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "ctrlc 3.1.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "directories 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "external 0.1.0 (git+https://github.com/CasualX/external?rev=af1c872)",
+ "external 0.1.0 (git+https://github.com/CasualX/external?rev=c680919)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "notify 5.0.0-pre.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "pelite 0.7.1 (git+https://github.com/CasualX/pelite?rev=155918a)",
+ "pelite 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "structopt 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.7 (git+https://github.com/trmcnvn/winapi-rs?branch=working_build_with_796)",
 ]
@@ -738,7 +738,7 @@ dependencies = [
 "checksum ctrlc 3.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "c7dfd2d8b4c82121dfdff120f818e09fc4380b0b7e17a742081a89b94853e87f"
 "checksum directories 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "551a778172a450d7fc12e629ca3b0428d00f6afa9a43da1b630d54604e97371c"
 "checksum dirs-sys 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "afa0b23de8fd801745c471deffa6e12d248f962c9fd4b4c33787b055599bde7b"
-"checksum external 0.1.0 (git+https://github.com/CasualX/external?rev=af1c872)" = "<none>"
+"checksum external 0.1.0 (git+https://github.com/CasualX/external?rev=c680919)" = "<none>"
 "checksum failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "795bd83d3abeb9220f257e597aa0080a508b27533824adf336529648f6abf7e2"
 "checksum failure_derive 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "ea1063915fd7ef4309e222a5a07cf9c319fb9c7836b1f89b85458672dbb127e1"
 "checksum filetime 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "450537dc346f0c4d738dda31e790da1da5d4bd12145aad4da0d03d713cb3794f"
@@ -767,8 +767,8 @@ dependencies = [
 "checksum owning_ref 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "cdf84f41639e037b484f93433aa3897863b561ed65c6e59c7073d7c561710f37"
 "checksum parking_lot 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)" = "149d8f5b97f3c1133e3cfcd8886449959e856b557ff281e292b733d7c69e005e"
 "checksum parking_lot_core 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)" = "4db1a8ccf734a7bce794cc19b3df06ed87ab2f3907036b693c68f56b4d4537fa"
-"checksum pelite 0.7.1 (git+https://github.com/CasualX/pelite?rev=155918a)" = "<none>"
-"checksum pelite-macros 0.1.0 (git+https://github.com/CasualX/pelite?rev=155918a)" = "<none>"
+"checksum pelite 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8c1b30c6d89cb8dfd3166c23c78cce93fdf5dc421849dfaf7492e33f25339ca8"
+"checksum pelite-macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "80476a648b958c74440f21bfd64dee8d251c461692dc94355312ec1f188a7ea0"
 "checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
 "checksum quote 0.6.13 (registry+https://github.com/rust-lang/crates.io-index)" = "6ce23b6b870e8f94f81fb0a363d65d86675884b34a09043c81e5562f11c1f8e1"
 "checksum rand 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = "552840b97013b1a26992c11eac34bdd778e464601a4c2054b5f0bff7c6761293"

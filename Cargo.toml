@@ -19,9 +19,9 @@ failure = "0.1"
 ctrlc = { version = "3.1", features = ["termination"] }
 
 [target.'cfg(windows)'.dependencies]
-external = { git = "https://github.com/CasualX/external", rev = "af1c872" }
-pelite = { git = "https://github.com/CasualX/pelite", rev = "155918a" }
-winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "mmdeviceapi"] }
+external = { git = "https://github.com/CasualX/external", rev = "c680919" }
+pelite = "0.8"
+winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "objbase", "mmdeviceapi"] }
 com_ptr = "0.1"
 
 # Dependent on PR and build fixes
