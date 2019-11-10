@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'spotify-mutify'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=spotify-mutify",
+                    "--package=spotify-mutify"
+                ],
+                "filter": {
+                    "name": "spotify-mutify",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "-u",
+                "vevix"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'spotify-mutify'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=spotify-mutify",
+                    "--package=spotify-mutify"
+                ],
+                "filter": {
+                    "name": "spotify-mutify",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
