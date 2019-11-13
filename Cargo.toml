@@ -7,11 +7,11 @@ authors = ["Thomas McNiven <hello@vevix.net>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/trmcnvn/spotify-mutify"
-keywords = ["spotify", "windows"]
+keywords = ["spotify", "ads", "mute", "windows"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-structopt = "0.2"
 crossbeam-channel = "0.3.8"
 notify = "=5.0.0-pre.1"
 directories = "2.0"

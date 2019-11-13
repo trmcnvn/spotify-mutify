@@ -5,17 +5,18 @@ use external::FromInner;
 use failure::{format_err, Error};
 use std::ptr;
 use winapi::{
-    shared::{minwindef::DWORD, winerror::S_OK, wtypesbase::CLSCTX_INPROC_SERVER},
+    shared::{minwindef::DWORD, winerror::S_OK},
     um::{
         audioclient::{ISimpleAudioVolume, AUDCLNT_S_NO_SINGLE_PROCESS},
         audiopolicy::{
-            IAudioSessionControl2, IAudioSessionEnumerator, IAudioSessionManager2,
-            IID_IAudioSessionManager2,
+            IAudioSessionControl, IAudioSessionControl2, IAudioSessionEnumerator,
+            IAudioSessionManager2, IID_IAudioSessionManager2,
         },
-        combaseapi::{CoInitializeEx, CoUninitialize, CLSCTX_ALL, COINITBASE_MULTITHREADED},
+        combaseapi::{CoInitializeEx, CoUninitialize, CLSCTX_ALL},
         mmdeviceapi::{
             eMultimedia, eRender, CLSID_MMDeviceEnumerator, IMMDevice, IMMDeviceEnumerator,
         },
+        objbase::COINIT_APARTMENTTHREADED,
     },
 };
 
@@ -105,17 +106,16 @@ pub struct ComIsBleh {
 
 impl ComIsBleh {
     fn new() -> Self {
-        unsafe { CoInitializeEx(ptr::null_mut(), COINITBASE_MULTITHREADED) };
+        unsafe { CoInitializeEx(ptr::null_mut(), COINIT_APARTMENTTHREADED) };
         Self { control: None }
     }
 
     pub fn get_device(&self) -> Result<ComPtr<IMMDevice>, Error> {
-        let device_enumerator = co_create_instance::<IMMDeviceEnumerator>(
-            &CLSID_MMDeviceEnumerator,
-            None,
-            CLSCTX_INPROC_SERVER,
-        )
-        .map_err(|err| format_err!("co_create_instance::<IMMDeviceEnumerator>: {:08x}", err))?;
+        let device_enumerator =
+            co_create_instance::<IMMDeviceEnumerator>(&CLSID_MMDeviceEnumerator, None, CLSCTX_ALL)
+                .map_err(|err| {
+                    format_err!("co_create_instance::<IMMDeviceEnumerator>: {:08x}", err)
+                })?;
 
         ComPtr::new(|| {
             let mut obj = ptr::null_mut();
@@ -173,12 +173,15 @@ impl ComIsBleh {
         enumerator: &ComPtr<IAudioSessionEnumerator>,
         idx: i32,
     ) -> Result<ComPtr<IAudioSessionControl2>, Error> {
-        ComPtr::new(|| {
+        let control = ComPtr::new(|| {
             let mut obj = ptr::null_mut();
             let res = unsafe { enumerator.GetSession(idx, &mut obj) };
-            hresult(obj as *mut IAudioSessionControl2, res)
+            hresult(obj as *mut IAudioSessionControl, res)
         })
-        .map_err(|err| format_err!("IAudioSessionEnumerator::GetSession: {:08x}", err))
+        .map_err(|err| format_err!("IAudioSessionEnumerator::GetSession: {:08x}", err))?;
+        control
+            .query_interface::<IAudioSessionControl2>()
+            .map_err(|err| format_err!("IAudioSessionControl2 Error: {:08x}", err))
     }
 
     pub fn get_session_pid(&self, control: &ComPtr<IAudioSessionControl2>) -> Result<DWORD, Error> {

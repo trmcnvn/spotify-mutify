@@ -1,3 +1,5 @@
+#![deny(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
+
 use crate::watcher::*;
 #[cfg(windows)]
 use crate::windows::*;
@@ -13,50 +15,35 @@ use std::sync::{
 };
 use std::thread;
 use std::time::Duration;
-use structopt::StructOpt;
 
 mod watcher;
 #[cfg(windows)]
 mod windows;
 
-#[derive(StructOpt, Debug)]
-#[structopt(name = "mutify")]
-struct CommandOptions {
-    #[structopt(short, long, help = "Spotify username")]
-    username: String,
+fn welcome_message() {
+    println!("Spotify ads will now be muted. Enjoy your music!");
 }
 
 fn main() -> Result<(), Error> {
-    let args = CommandOptions::from_args();
-
     // Watch the Spotify directory for file changes
     let (tx, rx) = unbounded();
-    let _watcher = Watcher::watch(tx, args.username)?;
+    let _watcher = Watcher::watch(tx)?;
 
-    // Handle exiting
+    // Continuously run and watch for interrupts to exit cleanly
     let running = Arc::new(AtomicBool::new(true));
     let running_thd = running.clone();
     set_handler(move || {
         running_thd.store(false, Ordering::SeqCst);
     })?;
 
-    // You have no chance to survive make your time
-    let mut count = 0;
-    for_great_justice(running, rx, &mut count)?;
-    println!("Exiting... Spotify played {}~ ads this session.", count);
-    Ok(())
-}
-
-fn main_screen_turn_on() {
-    println!("Spotify are belong to us! Waiting for ads...");
-    println!("Exit with Ctrl-C...");
+    // Enjoy your music
+    mute_spotify(running, rx)
 }
 
 #[cfg(windows)]
-fn for_great_justice(
+fn mute_spotify(
     running: Arc<AtomicBool>,
     rx: Receiver<notify::Result<notify::Event>>,
-    count: &mut usize,
 ) -> Result<(), Error> {
     // Find Spotify and attach to the process
     let (process_entry, module_entry) = Windows::find_spotify()?;
@@ -73,11 +60,16 @@ fn for_great_justice(
     file.scanner()
         .matches(&pattern, file.headers().image_range())
         .next(&mut addresses);
-    let target_address = (module_entry.base() + addresses[1] as usize) - 0x1800;
+    let target_address = (module_entry.base() + addresses[1] as usize) - 0x1400; // This needs to be fixed!
+
+    println!(
+        "Mem. Read: {:?}",
+        Windows::get_current_track(&process, target_address)?
+    );
 
     // Get audio session control
     let com = Windows::get_audio_session(process_entry.process_id())?;
-    main_screen_turn_on();
+    welcome_message();
 
     // Block for events from the watcher
     let mut is_muted = false;
@@ -93,7 +85,6 @@ fn for_great_justice(
                             if is_playing_ad && !is_muted {
                                 is_muted = true;
                                 com.set_mute(is_playing_ad as i32)?;
-                                *count += 1;
                             } else if !is_playing_ad && is_muted {
                                 is_muted = false;
                                 com.set_mute(is_playing_ad as i32)?;
