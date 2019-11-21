@@ -86,6 +86,9 @@ fn mute_spotify(
                                 is_muted = true;
                                 com.set_mute(is_playing_ad as i32)?;
                             } else if !is_playing_ad && is_muted {
+                                // This is usually a few ms too fast and the last bit of the ad leaks through
+                                // so, artificially wait for a little bit
+                                thread::sleep(Duration::from_millis(500));
                                 is_muted = false;
                                 com.set_mute(is_playing_ad as i32)?;
                             }
