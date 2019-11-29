@@ -14,7 +14,7 @@ impl Watcher {
         let mut watcher = notify::watcher(sender, std::time::Duration::from_millis(500))?;
 
         // Watch the target directory
-        let target_path = Watcher::find_directory()?;
+        let target_path = Watcher::find_data_directory()?;
         for entry in fs::read_dir(&target_path)? {
             let dir = entry?;
             let dir_str =
@@ -37,7 +37,7 @@ impl Watcher {
         })
     }
 
-    fn find_directory() -> Result<PathBuf, Error> {
+    fn find_data_directory() -> Result<PathBuf, Error> {
         let base_dirs =
             BaseDirs::new().ok_or_else(|| format_err!("Couldn't get directory information"))?;
 

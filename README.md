@@ -1,10 +1,6 @@
 # Spotify Mutify
 
-Currently this only supports **Windows**.
-
-Mute those overly loud Spotify Ads.
-
-This will read the memory of the Spotify application to find out the currently playing track, and mute the application accordinly.
+This application will monitor your Spotify application so it can mute when ads are playing.
 
 ## Note
 
@@ -17,19 +13,9 @@ and fraudulent streaming activities are not permitted;
 
 **Use this at your own risk.**
 
-## Usage
+## Support
 
-```
-USAGE:
-    spotify-mutify.exe --username <username>
-
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
-OPTIONS:
-    -u, --username <username>    Spotify username
-```
+-   Windows 10 (Desktop, Windows Store)
 
 ## Related Applications
 
