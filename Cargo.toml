@@ -1,7 +1,7 @@
 [package]
 name = "spotify-mutify"
 version = "0.1.0"
-description = "Mute those overly loud Spotify Ads"
+description = "Mute those obnoxiously loud Spotify Ads"
 edition = "2018"
 authors = ["Thomas McNiven <hello@vevix.net>"]
 license = "MIT"
@@ -12,18 +12,17 @@ categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-crossbeam-channel = "0.3.8"
+crossbeam-channel = "0.3"
 notify = "=5.0.0-pre.1"
 directories = "2.0"
-failure = "0.1"
+anyhow = "1.0"
 ctrlc = { version = "3.1", features = ["termination"] }
 
 [target.'cfg(windows)'.dependencies]
 external = { git = "https://github.com/CasualX/external", rev = "c680919" }
 pelite = "0.8"
-winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "objbase", "mmdeviceapi"] }
+winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "mmdeviceapi", "objbase"] }
 com_ptr = "0.1"
 
-# Dependent on PR and build fixes
 [patch.crates-io]
 winapi = { git = "https://github.com/trmcnvn/winapi-rs", branch = "working_build_with_796" }
