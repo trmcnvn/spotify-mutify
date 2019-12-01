@@ -129,8 +129,7 @@ impl Spotify {
         file.scanner()
             .matches(pattern, file.headers().image_range())
             .next(&mut addresses);
-        self.target_address = (module.base() + addresses[1] as usize) - 0x1400;
-        println!("Memory: {:?}", self.get_current_track());
+        self.target_address = (module.base() + addresses[1] as usize) - 0x1400; // TODO: ???
 
         // Continue looking for the volume control until it is found. It won't exist until Spotify
         // actually starts playing.
