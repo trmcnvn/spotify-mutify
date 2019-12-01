@@ -58,20 +58,46 @@ impl Spotify {
         Ok(watcher)
     }
 
+    pub fn is_valid_event(&self, event: &notify::Event) -> bool {
+        event.paths.iter().any(|x| {
+            if let Some(file_name) = x.file_name() {
+                return file_name == "ad-state-storage.bnk" || file_name == "recently_played.bnk";
+            }
+            false
+        })
+    }
+
+    pub fn is_playing_ad(&self) -> bool {
+        if let Ok(track) = self.get_current_track() {
+            return track.eq("spotify:ad");
+        }
+        false
+    }
+
     #[cfg(windows)]
     pub fn run_or_attach(&mut self) -> Result<()> {
         // Find `spotify.exe` within the currently running processes
-        let mut processes = EnumProcess::create()?;
-        let process = match processes.find(|process| {
-            if let Ok(name) = process.exe_file().into_string() {
-                if name.to_lowercase().contains("spotify.exe") {
-                    return true;
-                }
+        let find_process_fn = || -> Result<ProcessEntry> {
+            let mut processes = EnumProcess::create()?;
+            processes
+                .find(|process| {
+                    if let Ok(name) = process.exe_file().into_string() {
+                        if name.to_lowercase().contains("spotify.exe") {
+                            return true;
+                        }
+                    }
+                    false
+                })
+                .ok_or_else(|| anyhow!("Couldn't find Spotify process"))
+        };
+        #[allow(clippy::single_match_else)]
+        let process = match find_process_fn() {
+            Ok(process) => process,
+            _ => {
+                std::process::Command::new("spotify").spawn()?;
+                std::thread::sleep(Duration::from_secs(2)); // Wait for spawn...
+                find_process_fn()?
             }
-            false
-        }) {
-            Some(process) => process,
-            None => unreachable!(), // TODO: Start Spotify
         };
 
         // Find the target module within the Spotify process
@@ -106,32 +132,22 @@ impl Spotify {
         self.target_address = (module.base() + addresses[1] as usize) - 0x1400;
         println!("Memory: {:?}", self.get_current_track());
 
-        // Get an instance to the audio control owned by Spotify
-        let pid = process.pid()?;
-        self.windows_com.find_audio_control(pid)?;
+        // Continue looking for the volume control until it is found. It won't exist until Spotify
+        // actually starts playing.
+        loop {
+            let pid = process.pid()?;
+            match self.windows_com.find_audio_control(pid) {
+                Ok(_) => break,
+                _ => std::thread::sleep(Duration::from_secs(1)),
+            };
+        }
 
         Ok(())
-    }
-
-    pub fn is_playing_ad(&self) -> bool {
-        if let Ok(track) = self.get_current_track() {
-            return track.eq("spotify:ad");
-        }
-        false
     }
 
     #[cfg(windows)]
     pub fn set_mute(&self, value: bool) -> Result<()> {
         self.windows_com.set_mute(value)
-    }
-
-    pub fn is_valid_event(&self, event: &notify::Event) -> bool {
-        event.paths.iter().any(|x| {
-            if let Some(file_name) = x.file_name() {
-                return file_name == "ad-state-storage.bnk" || file_name == "recently_played.bnk";
-            }
-            false
-        })
     }
 
     #[cfg(windows)]
