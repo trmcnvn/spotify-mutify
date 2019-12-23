@@ -24,5 +24,5 @@ pelite = "0.8"
 winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "mmdeviceapi", "objbase"] }
 com_ptr = "0.1"
 
-[patch.crates-io]
-winapi = { git = "https://github.com/trmcnvn/winapi-rs", branch = "working_build_with_796" }
+[replace]
+"winapi:0.3.7" = { git = "https://github.com/trmcnvn/winapi-rs", branch = "working_build_with_796" }
