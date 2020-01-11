@@ -9,7 +9,7 @@ use external::process::*;
 #[cfg(windows)]
 use notify::Watcher;
 #[cfg(windows)]
-use pelite::{pattern, PeFile};
+use pelite::{pattern, PeView};
 use std::path::PathBuf;
 use std::time::Duration;
 
@@ -37,12 +37,12 @@ impl Spotify {
     }
 
     /// Watch the Spotify data directory for changes
-    pub fn watch_data_directory(&self, sender: SenderType) -> Result<notify::RecommendedWatcher> {
+    pub fn watch_data_directory(sender: SenderType) -> Result<notify::RecommendedWatcher> {
         let mut watcher = notify::watcher(sender, Duration::from_millis(500))?;
 
         // Watch each `-user` directory within the data directory This is easier than having the user specify which user
         // is currently listening
-        let target_path = self.find_data_directory()?;
+        let target_path = Self::find_data_directory()?;
         for entry in std::fs::read_dir(&target_path)? {
             let entry = entry?;
             let path = entry
@@ -58,7 +58,7 @@ impl Spotify {
         Ok(watcher)
     }
 
-    pub fn is_valid_event(&self, event: &notify::Event) -> bool {
+    pub fn is_valid_event(event: &notify::Event) -> bool {
         event.paths.iter().any(|x| {
             if let Some(file_name) = x.file_name() {
                 return file_name == "ad-state-storage.bnk" || file_name == "recently_played.bnk";
@@ -121,7 +121,7 @@ impl Spotify {
         // Load the module into a PeFile structure
         let mut bytes: Vec<u8> = vec![0; module.size()];
         process.vm_read_partial(module.base(), &mut bytes)?;
-        let file = PeFile::from_bytes(&bytes)?;
+        let file = PeView::from_bytes(&bytes)?;
 
         // Search for the memory pattern
         let pattern = pattern!("01 00 00 00 '73 70 6F 74 69 66 79 3A");
@@ -129,7 +129,7 @@ impl Spotify {
         file.scanner()
             .matches(pattern, file.headers().image_range())
             .next(&mut addresses);
-        self.target_address = (module.base() + addresses[1] as usize) - 0x1400; // TODO: ???
+        self.target_address = module.base() + addresses[1] as usize;
 
         // Continue looking for the volume control until it is found. It won't exist until Spotify
         // actually starts playing.
@@ -160,7 +160,7 @@ impl Spotify {
     }
 
     /// Find the directory for Spotify's local data
-    fn find_data_directory(&self) -> Result<PathBuf> {
+    fn find_data_directory() -> Result<PathBuf> {
         let base_directory =
             BaseDirs::new().ok_or_else(|| anyhow!("Couldn't find valid home directory"))?;
 

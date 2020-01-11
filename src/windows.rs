@@ -30,7 +30,7 @@ impl Windows {
         Self { control: None }
     }
 
-    /// Return the ISimpleAudioVolume interface to the Windows volume control for the target ProcessId
+    /// Return the `ISimpleAudioVolume` interface to the Windows volume control for the target `ProcessId`
     pub fn find_audio_control(&mut self, process_id: ProcessId) -> Result<AudioControl> {
         // Get Default Audio Device
         let device_enumerator = com_ptr::co_create_instance::<IMMDeviceEnumerator>(

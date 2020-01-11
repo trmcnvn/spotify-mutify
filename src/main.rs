@@ -18,7 +18,7 @@ fn main() -> Result<()> {
     let mut spotify = Spotify::new();
 
     // Watch Spotify and start/attach to the application
-    let _watcher = spotify.watch_data_directory(tx)?;
+    let _watcher = Spotify::watch_data_directory(tx)?;
     spotify.run_or_attach()?;
 
     // Keep running while waiting for a termination signal
@@ -36,13 +36,12 @@ fn main() -> Result<()> {
         crossbeam_channel::select! {
             recv(rx) -> event => {
                 let event = event??;
-                if spotify.is_valid_event(&event) {
+                if Spotify::is_valid_event(&event) {
                     let is_playing_ad = spotify.is_playing_ad();
                     if is_playing_ad && !is_muted {
                         is_muted = true;
                         spotify.set_mute(true)?;
                     } else if !is_playing_ad && is_muted {
-                        thread::sleep(Duration::from_millis(500));
                         is_muted = false;
                         spotify.set_mute(false)?;
                     }
