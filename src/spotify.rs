@@ -12,6 +12,8 @@ use notify::Watcher;
 #[cfg(windows)]
 use pelite::{pattern, PeView};
 use std::path::PathBuf;
+#[cfg(windows)]
+use std::time::Duration;
 
 type SenderType = flume::Sender<notify::Result<notify::Event>>;
 
