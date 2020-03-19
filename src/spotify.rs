@@ -95,7 +95,9 @@ impl Spotify {
             Ok(process) => process,
             _ => {
                 std::process::Command::new("spotify").spawn()?;
-                std::thread::sleep(Duration::from_secs(2)); // Wait for spawn...
+                while let Err(_) = find_process_fn() {
+                    std::thread::sleep(Duration::from_secs(1));
+                }
                 find_process_fn()?
             }
         };
@@ -118,25 +120,26 @@ impl Spotify {
         let process = Process::attach(process.process_id(), rights)?;
         self.process = Some(process.clone());
 
-        // Load the module into a PeFile structure
-        let mut bytes: Vec<u8> = vec![0; module.size()];
-        process.vm_read_partial(module.base(), &mut bytes)?;
-        let file = PeView::from_bytes(&bytes)?;
-
-        // Search for the memory pattern
-        let pattern = pattern!("01 00 00 00 '73 70 6F 74 69 66 79 3A");
-        let mut addresses = [0; 2];
-        file.scanner()
-            .matches(pattern, file.headers().image_range())
-            .next(&mut addresses);
-        self.target_address = module.base() + addresses[1] as usize;
-
         // Continue looking for the volume control until it is found. It won't exist until Spotify
-        // actually starts playing.
+        // actually starts playing sound.
         loop {
             let pid = process.pid()?;
             match self.windows_com.find_audio_control(pid) {
-                Ok(_) => break,
+                Ok(_) => {
+                    // Load the module into a PeFile structure
+                    let mut bytes: Vec<u8> = vec![0; module.size()];
+                    process.vm_read_partial(module.base(), &mut bytes)?;
+                    let file = PeView::from_bytes(&bytes)?;
+
+                    // Search for the memory pattern
+                    let pattern = pattern!("01 00 00 00 '73 70 6F 74 69 66 79 3A");
+                    let mut addresses = [0; 2];
+                    file.scanner()
+                        .matches(pattern, file.headers().image_range())
+                        .next(&mut addresses);
+                    self.target_address = module.base() + addresses[1] as usize;
+                    break;
+                }
                 _ => std::thread::sleep(Duration::from_secs(1)),
             };
         }
