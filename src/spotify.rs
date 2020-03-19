@@ -12,10 +12,11 @@ use notify::Watcher;
 #[cfg(windows)]
 use pelite::{pattern, PeView};
 use std::path::PathBuf;
+use std::sync::mpsc::Sender;
 #[cfg(windows)]
 use std::time::Duration;
 
-type SenderType = flume::Sender<notify::Result<notify::Event>>;
+type SenderType = Sender<notify::Result<notify::Event>>;
 
 pub(crate) struct Spotify {
     #[cfg(windows)]

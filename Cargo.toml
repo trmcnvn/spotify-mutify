@@ -15,11 +15,9 @@ categories = ["command-line-utilities"]
 notify = "=5.0.0-pre.2"
 directories = "2.0"
 anyhow = "1.0"
-ctrlc = { version = "3.1", features = ["termination"] }
-flume = "0.6"
 
 [target.'cfg(windows)'.dependencies]
-external = { git = "https://github.com/CasualX/external", rev = "c680919" }
+external = { git = "https://github.com/CasualX/external", rev = "59530b9" }
 pelite = "0.8"
 winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseapi", "mmdeviceapi", "objbase"] }
 com_ptr = "0.1"
