@@ -7,16 +7,16 @@ authors = ["Thomas McNiven <hello@vevix.net>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/trmcnvn/spotify-mutify"
-keywords = ["spotify", "ads", "mute", "windows"]
+keywords = ["spotify", "ads", "mute"]
 categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-crossbeam-channel = "0.3"
-notify = "=5.0.0-pre.1"
+notify = "=5.0.0-pre.2"
 directories = "2.0"
 anyhow = "1.0"
 ctrlc = { version = "3.1", features = ["termination"] }
+flume = "0.6"
 
 [target.'cfg(windows)'.dependencies]
 external = { git = "https://github.com/CasualX/external", rev = "c680919" }
@@ -25,4 +25,4 @@ winapi = { version = "0.3", features = ["audioclient", "audiopolicy", "combaseap
 com_ptr = "0.1"
 
 [replace]
-"winapi:0.3.7" = { git = "https://github.com/trmcnvn/winapi-rs", branch = "working_build_with_796" }
+"winapi:0.3.8" = { git = "https://github.com/trmcnvn/winapi-rs", branch = "trmcnvn/audio" }

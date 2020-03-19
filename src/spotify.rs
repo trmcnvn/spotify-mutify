@@ -1,3 +1,5 @@
+#[cfg(target_os = "macos")]
+use crate::macos::*;
 #[cfg(windows)]
 use crate::windows::*;
 use anyhow::{anyhow, Result};
@@ -6,14 +8,12 @@ use directories::BaseDirs;
 use external::module::*;
 #[cfg(windows)]
 use external::process::*;
-#[cfg(windows)]
 use notify::Watcher;
 #[cfg(windows)]
 use pelite::{pattern, PeView};
 use std::path::PathBuf;
-use std::time::Duration;
 
-type SenderType = crossbeam_channel::Sender<notify::Result<notify::Event>>;
+type SenderType = flume::Sender<notify::Result<notify::Event>>;
 
 pub(crate) struct Spotify {
     #[cfg(windows)]
@@ -22,6 +22,8 @@ pub(crate) struct Spotify {
     target_address: usize,
     #[cfg(windows)]
     windows_com: Windows,
+    #[cfg(target_os = "macos")]
+    previous_volume: u8,
 }
 
 impl Spotify {
@@ -33,12 +35,17 @@ impl Spotify {
             target_address: 0,
             #[cfg(windows)]
             windows_com: Windows::new(),
+            #[cfg(target_os = "macos")]
+            previous_volume: 0,
         }
     }
 
     /// Watch the Spotify data directory for changes
     pub fn watch_data_directory(sender: SenderType) -> Result<notify::RecommendedWatcher> {
-        let mut watcher = notify::watcher(sender, Duration::from_millis(500))?;
+        let event_fn = move |res: notify::Result<notify::Event>| {
+            sender.send(res).expect("event to be sent");
+        };
+        let mut watcher: notify::RecommendedWatcher = Watcher::new_immediate(event_fn)?;
 
         // Watch each `-user` directory within the data directory This is easier than having the user specify which user
         // is currently listening
@@ -69,7 +76,7 @@ impl Spotify {
 
     pub fn is_playing_ad(&self) -> bool {
         if let Ok(track) = self.get_current_track() {
-            return track.eq("spotify:ad");
+            return track.contains("spotify:ad");
         }
         false
     }
@@ -147,9 +154,34 @@ impl Spotify {
         Ok(())
     }
 
+    #[cfg(target_os = "macos")]
+    pub fn run_or_attach(&mut self) -> Result<()> {
+        // Just run this regardless, it'll just open the current instance if it exists.
+        std::process::Command::new("/usr/bin/open")
+            .arg("-b")
+            .arg("com.spotify.client")
+            .spawn()?;
+        Ok(())
+    }
+
     #[cfg(windows)]
     pub fn set_mute(&self, value: bool) -> Result<()> {
         self.windows_com.set_mute(value)
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn set_mute(&mut self, value: bool) -> Result<()> {
+        if value {
+            let volume = execute_applescript("tell application \"Spotify\" to (get sound volume)")?;
+            let volume = String::from_utf8(volume.stdout)?;
+            self.previous_volume = volume.trim().parse::<u8>()?;
+        }
+        let volume = if value { 0 } else { self.previous_volume };
+        execute_applescript(&format!(
+            "tell application \"Spotify\" to set sound volume to {}",
+            volume
+        ))?;
+        Ok(())
     }
 
     #[cfg(windows)]
@@ -162,6 +194,15 @@ impl Spotify {
         Ok(current_track.to_owned())
     }
 
+    #[cfg(target_os = "macos")]
+    fn get_current_track(&self) -> Result<String> {
+        let output = execute_applescript(
+            "tell application \"Spotify\" to (get spotify url of current track)",
+        )?;
+        String::from_utf8(output.stdout)
+            .map_err(|err| anyhow!("Failed to get process output: {}", err))
+    }
+
     /// Find the directory for Spotify's local data
     fn find_data_directory() -> Result<PathBuf> {
         let base_directory =
@@ -171,7 +212,7 @@ impl Spotify {
         // Linux    $XDG_DATA_HOME or $HOME/.local/share
         // macOS	$HOME/Library/Application Support
         // Windows	{FOLDERID_RoamingAppData}
-        let target_path = base_directory.data_dir().join("Spotify\\Users");
+        let target_path = base_directory.data_dir().join("Spotify").join("Users");
         if target_path.as_path().exists() {
             return Ok(target_path);
         }
