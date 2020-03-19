@@ -13,9 +13,10 @@ and fraudulent streaming activities are not permitted;
 
 **Use this at your own risk.**
 
-## Support
+## Supports
 
 -   Windows 10 (Desktop, Windows Store)
+-   MacOS
 
 ## Related Applications
 
